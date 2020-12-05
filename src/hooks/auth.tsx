@@ -1,9 +1,15 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import api from '../services/api';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface IAuthState {
   token: string;
-  user: object;
+  user: User;
 }
 
 interface ISignInCredentials {
@@ -12,7 +18,7 @@ interface ISignInCredentials {
 }
 
 interface IAuthContext {
-  user: object;
+  user: User;
   signIn(credentials: ISignInCredentials): Promise<void>;
   signOut(): void;
 }

@@ -21,7 +21,7 @@ const toastTypeVariations = {
   `,
 };
 
-export const Container = styled(animated.div) <ToastProps>`
+export const Container = styled(animated.div)<ToastProps>`
   display: flex;
   width: 360px;
 
@@ -34,7 +34,7 @@ export const Container = styled(animated.div) <ToastProps>`
     margin-top: 8px;
   }
 
-  ${(props) => toastTypeVariations[props.type || 'info']}
+  ${props => toastTypeVariations[props.type || 'info']}
 
   > svg {
     margin: 4px 12px 0 0;
@@ -62,12 +62,13 @@ export const Container = styled(animated.div) <ToastProps>`
     color: inherit;
   }
 
-  ${(props) => !props.hasDescription && css`
-    align-items: center;
+  ${props =>
+    !props.hasDescription &&
+    css`
+      align-items: center;
 
-    svg {
-      margin-top: 0;
-    }
-
-  `}
+      svg {
+        margin-top: 0;
+      }
+    `}
 `;
