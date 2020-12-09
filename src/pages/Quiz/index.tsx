@@ -29,7 +29,7 @@ const Quiz: React.FC = () => {
       question_team_qty_limit: 80,
       status: 'not-started',
     });
-  }, [quizInfo]);
+  }, []);
 
   return (
     <Container>
@@ -53,8 +53,16 @@ const Quiz: React.FC = () => {
             <Route path={`${match.url}`} exact>
               <QuizInfo quizInfo={quizInfo} />
             </Route>
-            <Route path={`${match.url}`} component={Participants} exact />
-            <Route path={`${match.url}`} component={Questions} exact />
+            <Route
+              path={`${match.url}/participants`}
+              component={Participants}
+              exact
+            />
+            <Route
+              path={`${match.url}/questions`}
+              component={Questions}
+              exact
+            />
           </Switch>
         </Content>
       )}
