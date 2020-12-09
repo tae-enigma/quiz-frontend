@@ -11,7 +11,7 @@ interface LinkProps {
 
 const Link: React.FC<LinkProps> = ({ to, children, icon: Icon, active }) => {
   return (
-    <Container to={to} activeClassName="active-link" exact>
+    <Container to={to} exact activeClassName="active-link">
       {Icon && <Icon size={20} />}
       {children}
     </Container>

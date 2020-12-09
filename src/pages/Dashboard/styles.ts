@@ -66,7 +66,7 @@ export const CardContent = styled.div`
 `;
 
 interface StatusBadgeProps {
-  status: 'not-started' | 'started' | 'finalized';
+  status: 'not-started' | 'started' | 'finished';
 }
 
 const statusBadgeColors = {
@@ -78,7 +78,7 @@ const statusBadgeColors = {
     background-color: #17a2b8;
     color: #f2f2f2;
   `,
-  finalized: css`
+  finished: css`
     background-color: #28a745;
     color: #f2f2f2;
   `,

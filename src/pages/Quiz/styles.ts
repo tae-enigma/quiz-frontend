@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
 export const Container = styled.div``;
-export const Content = styled.div``;
-export const QuizMenu = styled.div`
+export const Content = styled.div`
   max-width: 960px;
   margin: auto;
+`;
+export const QuizMenu = styled.div`
   padding: 24px 0;
   display: flex;
 
