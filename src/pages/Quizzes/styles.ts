@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import map from '../../assets/images/map1.png';
+import map from '../../assets/images/map.png';
 
 export const Container = styled.div`
   height: 100vh;
@@ -9,6 +9,7 @@ export const Container = styled.div`
   justify-content: center;
   background: url(${map});
   background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 // cor da torre dos temidos: #000000
@@ -30,13 +31,13 @@ export const Content = styled.div`
   img {
     width: 80px;
     margin-top: -50px;
-    margin-left: 360px;
+    margin-left: 380px;
     opacity: 0.9;
   }
 
   button {
     color: #fff;
-    width: 160px;
+    width: 320px;
   }
 `;
 

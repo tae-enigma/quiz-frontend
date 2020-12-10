@@ -1,12 +1,12 @@
 import React, { ButtonHTMLAttributes } from 'react';
 import Button from '../../components/Button';
-import Checkbox from '../../components/Checkbox';
+import OptionButton from '../../components/OptionButton';
 import { Container, Content, Painting, Title } from './styles';
 import tower1 from '../../assets/images/tower_iluminados.png';
 import gold from '../../assets/images/gold.gif';
 
 interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: 'unchecked' | 'checked';
+  check?: 'unchecked' | 'checked';
 }
 
 const Quizzes: React.FC<CheckboxProps> = () => {
@@ -19,15 +19,13 @@ const Quizzes: React.FC<CheckboxProps> = () => {
           Questão 1
         </Title>
         <Painting>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </Painting>
-        <Checkbox alternative="Resposta 1" />
-        <Checkbox alternative="Resposta 2" />
-        <Checkbox alternative="Resposta 3A propriedade CSS text-align descreve como conteúdo inline, como texto, é alinhado no elemento pai em bloco. text-alig s" />
-        <Checkbox alternative="Resposta 4" />
+        <OptionButton alternative="Resposta 1" />
+        <OptionButton alternative="Resposta 2" />
+        <OptionButton selected="selected" alternative="Resposta 3" />
+        <OptionButton alternative="Resposta 4" />
         <Button>Enviar</Button>
       </Content>
     </Container>
