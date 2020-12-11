@@ -1,20 +1,20 @@
 import React, { ButtonHTMLAttributes } from 'react';
-import { Container, Option, OptionButtonCard } from './styles';
+import { Container, OptionText, OptionButtonCard } from './styles';
 
 interface OptionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  selected?: 'unselected' | 'selected';
-  alternative: string;
+  selected: boolean;
+  description: string;
 }
 
 const OptionButton: React.FC<OptionProps> = ({
   id,
-  alternative,
+  description,
   children,
   ...rest
 }) => (
   <Container>
-    <OptionButtonCard selected="unselected" type="button" {...rest}>
-      <Option>{alternative}</Option>
+    <OptionButtonCard {...rest}>
+      <OptionText>{description}</OptionText>
     </OptionButtonCard>
   </Container>
 );

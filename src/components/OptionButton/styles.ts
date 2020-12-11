@@ -1,17 +1,8 @@
 import styled, { css } from 'styled-components';
 
-interface OptionButtonProps {
-  selected?: 'unselected' | 'selected';
+interface OptionButtonProps1 {
+  selected: boolean;
 }
-
-const optionsCheck = {
-  unselected: css`
-    border: 3px solid #374354;
-  `,
-  selected: css`
-    border: 3px solid #3bae97;
-  `,
-};
 
 export const Container = styled.div`
   display: flex;
@@ -20,15 +11,23 @@ export const Container = styled.div`
   color: #374354;
 `;
 
-export const OptionButtonCard = styled.button<OptionButtonProps>`
+export const OptionButtonCard = styled.button<OptionButtonProps1>`
   transition: all 0.2s;
   border-radius: 8px;
   margin-top: 5px;
+  border: 3px solid #374354;
 
-  ${props => optionsCheck[props.selected || 'unselected']};
+  ${props =>
+    props.selected &&
+    css`
+      border: 3px solid #3bae97;
+      > p {
+        color: #3bae97;
+      }
+    `}
 `;
 
-export const Option = styled.p`
+export const OptionText = styled.p`
   padding: 5px;
   text-align: left;
   color: #374354;
