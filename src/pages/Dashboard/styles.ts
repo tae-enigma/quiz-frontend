@@ -38,6 +38,14 @@ export const QuizzesListHeader = styled.div`
   h2 {
     color: #9bddd0;
   }
+
+  button {
+    align-items: center;
+    width: min-content;
+    height: min-content;
+    padding: 0;
+    margin: 0;
+  }
 `;
 export const QuizzesListContent = styled.div`
   margin-bottom: 50px;
