@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Container, InfoList, Info } from './styles';
 
@@ -8,6 +8,7 @@ interface QuizInfo {
   question_qty_limit: number;
   question_team_qty_limit: number;
   status: 'not-started' | 'started' | 'finished';
+  teacher_id: string;
 }
 
 interface QuizInfoProps {
