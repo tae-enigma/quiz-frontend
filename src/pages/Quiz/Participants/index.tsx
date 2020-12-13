@@ -3,7 +3,6 @@ import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { FiPlus } from 'react-icons/fi';
-import { useParams } from 'react-router';
 import Input from '../../../components/Input';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import api from '../../../services/api';
@@ -21,9 +20,14 @@ import {
   List,
   ListHeader,
   ParticipantCard,
+  FormContent,
+  ModalBody,
+  ModalFooter,
+  EmailList,
 } from './styles';
 
 import { useAuth } from '../../../hooks/auth';
+import { useToast } from '../../../hooks/toast';
 
 interface IStudent {
   id: string;
@@ -37,24 +41,24 @@ interface IStudent {
 
 interface ParticipantsProps {
   students: IStudent[];
+  quizId: string;
 }
 
 interface IAddStudentToQuizFormData {
   students_emails: Array<string>;
 }
 
-interface RouteParams {
-  quizId: string;
-}
-
-const Participants: React.FC<ParticipantsProps> = ({ students }) => {
+const Participants: React.FC<ParticipantsProps> = ({ students, quizId }) => {
   const { user } = useAuth();
-  const { quizId } = useParams<RouteParams>();
+
+  const { addToast } = useToast();
 
   const formRef = useRef<FormHandles>(null);
   const [isOpen, setOpen] = useState(false);
 
-  const [selectedTeam, setSelectedteam] = useState<'radiant' | 'dire'>();
+  const [selectedTeam, setSelectedteam] = useState<'radiant' | 'dire' | ''>();
+  const [studentsEmails, setStudentsEmails] = useState<Array<string>>([]);
+
   const [direParticipants, setDireParticipants] = useState<IStudent[]>([]);
   const [radiantParticipants, setRadiantParticipants] = useState<IStudent[]>(
     [],
@@ -70,31 +74,49 @@ const Participants: React.FC<ParticipantsProps> = ({ students }) => {
 
   const toggleModal = useCallback(() => setOpen(!isOpen), [isOpen]);
 
-  const handleSubmit = useCallback(
-    async (data: IAddStudentToQuizFormData) => {
+  const openAddNewStudentsModal = useCallback(
+    (team: 'radiant' | 'dire') => {
+      setSelectedteam(team);
+
+      toggleModal();
+    },
+    [toggleModal],
+  );
+
+  const handleAddNewEmailToList = useCallback(
+    async (data: { email: string }) => {
       try {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required(
-            'Você precisa informar o nome do questionário',
-          ),
+          email: Yup.string()
+            .required('Você precisa informar um email para ser adicionado')
+            .email('Informe um e-mail de formato válido'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        const response = await api.post(`quizzes/${quizId}`, {
-          ...data,
-          team: selectedTeam,
-        });
+        const hasSelected = studentsEmails.find(
+          studentEmail => studentEmail === data.email,
+        );
 
-        if (selectedTeam === 'dire') {
-          setDireParticipants([...direParticipants, response.data]);
-        } else {
-          setRadiantParticipants([...radiantParticipants, response.data]);
-        }
+        if (hasSelected) return;
+
+        setStudentsEmails([...studentsEmails, data.email]);
+
+        formRef.current?.setData({ email: '' });
+        // const response = await api.post(`quizzes/${quizId}`, {
+        //   ...data,
+        //   team: selectedTeam,
+        // });
+
+        // if (selectedTeam === 'dire') {
+        //   setDireParticipants([...direParticipants, response.data]);
+        // } else {
+        //   setRadiantParticipants([...radiantParticipants, response.data]);
+        // }
       } catch (err) {
         console.log(err);
         if (err instanceof Yup.ValidationError) {
@@ -110,33 +132,82 @@ const Participants: React.FC<ParticipantsProps> = ({ students }) => {
         }
       }
     },
-    [radiantParticipants, direParticipants, quizId, selectedTeam],
+    [studentsEmails],
   );
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      const response = await api.post(`quizzes/${quizId}/students`, {
+        students_emails: studentsEmails,
+        team: selectedTeam,
+      });
+
+      if (selectedTeam === 'dire') {
+        setDireParticipants(oldState => [...oldState, ...response.data]);
+      } else {
+        setRadiantParticipants(oldState => [...oldState, ...response.data]);
+      }
+
+      addToast({
+        title: 'Participantes adicionados',
+        type: 'success',
+        description: 'Os participantes foram adicionados com sucesso',
+      });
+
+      setStudentsEmails([]);
+      setSelectedteam('');
+      toggleModal();
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        formRef.current?.setErrors(errors);
+      } else {
+        // addToast({
+        //   type: 'error',
+        //   title: 'Erro na autenticação',
+        //   description:
+        //     'Ocorreu um erro ao fazer login, cheque as credenciais',
+        // });
+      }
+    }
+  }, [selectedTeam, studentsEmails, quizId]);
 
   return (
     <Container>
       <Modal isOpen={isOpen} toggle={toggleModal}>
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <h2>Novo questionário</h2>
+        <>
+          <ModalBody>
+            <Form ref={formRef} onSubmit={handleAddNewEmailToList}>
+              <FormContent>
+                <h2>Convide novos invocadores a participar dessa aventura</h2>
+                <p>
+                  Adicione mais participantes para os times, lembre-se que os
+                  times devem possuir uma quantidade igual de pessoas entre eles
+                  ou no máximo com a diferença de um participante.
+                </p>
+                <div>
+                  <Input name="email" type="email" placeholder="E-mail" />
+                  <Button color="secondary" type="submit">
+                    <FiPlus size={30} />
+                  </Button>
+                </div>
+              </FormContent>
+            </Form>
+            <EmailList>
+              {studentsEmails.length > 0 &&
+                studentsEmails.map(email => <p key={email}>{email}</p>)}
+            </EmailList>
+          </ModalBody>
 
-          <Input name="name" type="text" placeholder="Nome da aventura" />
-          <Input name="time_limit" type="time" placeholder="Tempo limite" />
-          <Input
-            name="question_qty_limit"
-            type="number"
-            step="2"
-            placeholder="Quantidade máxima de questões"
-          />
-          <Input
-            name="question_team_qty_limit"
-            type="number"
-            step="2"
-            placeholder="Máximo de questões por time"
-          />
-          <Button color="primary" type="submit">
-            Cadastrar
-          </Button>
-        </Form>
+          <ModalFooter>
+            <Button color="primary" type="button" onClick={handleSubmit}>
+              Adicionar
+            </Button>
+            <Button color="secondary" type="button" onClick={toggleModal}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </>
       </Modal>
       <Content>
         <ListHeader>
@@ -145,7 +216,10 @@ const Participants: React.FC<ParticipantsProps> = ({ students }) => {
             <h4>Iluminados</h4>
           </div>
           {user.type === 'teacher' && (
-            <Button color="secondary">
+            <Button
+              color="secondary"
+              onClick={() => openAddNewStudentsModal('radiant')}
+            >
               <FiPlus size={30} />
             </Button>
           )}
@@ -168,7 +242,10 @@ const Participants: React.FC<ParticipantsProps> = ({ students }) => {
             <h4>Temidos</h4>
           </div>
           {user.type === 'teacher' && (
-            <Button color="secondary">
+            <Button
+              color="secondary"
+              onClick={() => openAddNewStudentsModal('dire')}
+            >
               <FiPlus size={30} />
             </Button>
           )}

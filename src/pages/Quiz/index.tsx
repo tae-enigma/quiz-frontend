@@ -93,7 +93,7 @@ const Quiz: React.FC = () => {
               <QuizInfo quizInfo={quizInfo} />
             </Route>
             <Route path={`${match.url}/participants`} exact>
-              <Participants students={students} />
+              <Participants students={students} quizId={quizId} />
             </Route>
             <Route path={`${match.url}/questions`} exact>
               <Questions questions={questions} />
