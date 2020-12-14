@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-import { FormHandles, Scope } from '@unform/core';
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import * as Yup from 'yup';
 import { FiCheckCircle, FiCircle, FiPlus } from 'react-icons/fi';
 
 import Modal from '../../../components/Modal';
@@ -21,11 +22,12 @@ import {
   QuestionActions,
   QuestionsHeader,
   QuestionsActions,
+  ModalBody,
 } from './styles';
-import TextArea from '../../../components/TextArea';
 import NewQuestionModal from './NewQuestionModal';
 import api from '../../../services/api';
 import { useToast } from '../../../hooks/toast';
+import getValidationErrors from '../../../utils/getValidationErrors';
 
 interface IOption {
   id: string;
@@ -63,13 +65,27 @@ interface IOnSubmitDTO {
 const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const formRef = useRef<FormHandles>(null);
 
   const [questions, setQuestions] = useState<IQuestion[]>([]);
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setOpen] = useState({
+    newQuestionModal: false,
+    setQuestionLevelModal: false,
+  });
 
-  const toggleModal = useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<
+    string | undefined
+  >();
+
+  const toggleModal = useCallback(
+    (modalName: 'newQuestionModal' | 'setQuestionLevelModal') => {
+      setOpen(oldState => ({
+        ...oldState,
+        [modalName]: !oldState[modalName],
+      }));
+    },
+    [],
+  );
 
   useEffect(() => {
     let isCancelled = false;
@@ -122,7 +138,7 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
           },
         ]);
 
-        toggleModal();
+        toggleModal('newQuestionModal');
 
         addToast({
           title: 'Questão adicionada com sucesso',
@@ -138,17 +154,106 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
     [quizId, toggleModal, addToast],
   );
 
+  const handleSubmitLinkQuestion = useCallback(
+    async (data: any) => {
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          level: Yup.number()
+            .required('Você precisa informar o nível da questão')
+            .min(1)
+            .max(2),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const response = await api.patch<IQuestion>(
+          `/quizzes/${quizId}/questions`,
+          {
+            ...data,
+            question_id: selectedQuestionId,
+          },
+        );
+
+        const findQuestionIndex = questions.findIndex(
+          question => question.id === response.data.id,
+        );
+
+        if (findQuestionIndex !== -1) {
+          const newQuestions = [...questions];
+
+          newQuestions[findQuestionIndex] = response.data;
+
+          setQuestions(newQuestions);
+        }
+
+        formRef.current?.setData({ level: '' });
+        toggleModal('setQuestionLevelModal');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro na autenticação',
+            description: err.response.data.error,
+          });
+        }
+      }
+    },
+    [addToast, toggleModal, quizId, selectedQuestionId, questions],
+  );
   return (
     <Container>
+      <Modal
+        isOpen={isOpen.setQuestionLevelModal}
+        size="sm"
+        toggle={() => toggleModal('setQuestionLevelModal')}
+      >
+        <ModalBody>
+          <Form
+            ref={formRef}
+            onSubmit={handleSubmitLinkQuestion}
+            initialData={{
+              level: 0,
+            }}
+          >
+            <h2>Adicionar questão ao questionário</h2>
+            <p>
+              Essa questão passará a fazer parte do questionário quando o mesmo
+              for aplicado, e para isso, você precisa definir o nível da
+              questão.
+              <br />
+              (1 - Questão simples/fácil, 2 - Questão complexa/difícil)
+            </p>
+            <Input
+              name="level"
+              placeholder="Nível da questão"
+              type="number"
+              min="1"
+              max="2"
+            />
+
+            <Button color="primary" type="submit">
+              <FiPlus size={20} />
+              Vincular
+            </Button>
+          </Form>
+        </ModalBody>
+      </Modal>
       <NewQuestionModal
-        toggle={toggleModal}
-        isOpen={isOpen}
+        toggle={() => toggleModal('newQuestionModal')}
+        isOpen={isOpen.newQuestionModal}
         onSubmit={handleSubmit}
       />
       {user.type === 'student' && (
         <QuestionsHeader>
           <QuestionsActions>
-            <Button onClick={toggleModal}>
+            <Button onClick={() => toggleModal('newQuestionModal')}>
               <FiPlus size={20} />
               Nova questão
             </Button>
@@ -163,6 +268,14 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
                 <div>
                   <TeamIcon team={question.team} />
                   <p>{teamsMap[question.team]}</p>
+                  {question.is_selected && (
+                    <p>
+                      {`Dificuldade: ${String(question.level).padStart(
+                        2,
+                        '0',
+                      )}`}
+                    </p>
+                  )}
                 </div>
                 <div>{question.description}</div>
                 <Options>
@@ -180,9 +293,17 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
               </QuestionContent>
               {user.type === 'teacher' && (
                 <QuestionActions>
-                  <Button color="secondary">
-                    <FiPlus size={30} />
-                  </Button>
+                  {!question.is_selected && (
+                    <Button
+                      color="secondary"
+                      onClick={() => {
+                        setSelectedQuestionId(question.id);
+                        toggleModal('setQuestionLevelModal');
+                      }}
+                    >
+                      <FiPlus size={30} />
+                    </Button>
+                  )}
                 </QuestionActions>
               )}
             </Question>

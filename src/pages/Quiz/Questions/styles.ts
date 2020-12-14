@@ -3,6 +3,13 @@ import radiantIconImg from '../../../assets/images/radiant_icon.png';
 import direIconImg from '../../../assets/images/dire_icon.png';
 
 export const Container = styled.div``;
+export const ModalBody = styled.div`
+  form > p {
+    font-size: 12px;
+    color: #e5e5e5;
+    margin-bottom: 24px;
+  }
+`;
 
 export const Content = styled.div`
   margin-bottom: 50px;
@@ -36,6 +43,10 @@ export const QuestionContent = styled.div`
   div:first-child {
     display: flex;
     align-items: center;
+  }
+
+  p + p {
+    margin-left: 16px;
   }
 
   > div + div {
