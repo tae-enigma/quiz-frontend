@@ -32,6 +32,7 @@ import Input from '../../components/Input';
 import getValidationErrors from '../../utils/getValidationErrors';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 
 interface ICreateQuizFormData {
   name: string;
@@ -53,20 +54,33 @@ interface IQuiz {
 
 const Dashboard: React.FC = () => {
   const match = useRouteMatch();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const { addToast } = useToast();
+
   const formRef = useRef<FormHandles>(null);
   const [quizzes, setQuizzes] = useState<IQuiz[]>([]);
   const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
-      const response = await api.get('/quizzes');
+      try {
+        const response = await api.get('/quizzes');
 
-      setQuizzes(response.data);
+        setQuizzes(response.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          signOut();
+          addToast({
+            title: 'Sessão expirada',
+            description:
+              'Sua sessão expirou, por favor, faça o login novamente',
+          });
+        }
+      }
     };
 
     fetchQuizzes();
-  }, []);
+  }, [signOut, addToast]);
 
   const toggleModal = useCallback(() => setOpen(!isOpen), [isOpen]);
 

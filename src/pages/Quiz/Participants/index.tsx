@@ -44,8 +44,8 @@ interface ParticipantsProps {
   quizId: string;
 }
 
-interface IAddStudentToQuizFormData {
-  students_emails: Array<string>;
+interface IFormData {
+  email: string;
 }
 
 const Participants: React.FC<ParticipantsProps> = ({ students, quizId }) => {
@@ -84,7 +84,7 @@ const Participants: React.FC<ParticipantsProps> = ({ students, quizId }) => {
   );
 
   const handleAddNewEmailToList = useCallback(
-    async (data: { email: string }) => {
+    async (data: IFormData) => {
       try {
         formRef.current?.setErrors({});
 
