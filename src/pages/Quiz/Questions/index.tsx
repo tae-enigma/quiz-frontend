@@ -134,14 +134,16 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
         isOpen={isOpen}
         onSubmit={handleSubmit}
       />
-      <QuestionsHeader>
-        <QuestionsActions>
-          <Button onClick={toggleModal}>
-            <FiPlus size={20} />
-            Nova questão
-          </Button>
-        </QuestionsActions>
-      </QuestionsHeader>
+      {user.type === 'student' && (
+        <QuestionsHeader>
+          <QuestionsActions>
+            <Button onClick={toggleModal}>
+              <FiPlus size={20} />
+              Nova questão
+            </Button>
+          </QuestionsActions>
+        </QuestionsHeader>
+      )}
       <Content>
         {questions.length > 0 &&
           questions.map(question => (
