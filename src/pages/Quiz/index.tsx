@@ -17,6 +17,7 @@ interface IQuizInfo {
   question_qty_limit: number;
   question_team_qty_limit: number;
   teacher_id: string;
+  teacher_name: string;
   status: 'not-started' | 'started' | 'finished';
 }
 
@@ -27,14 +28,14 @@ interface IOption {
   question_id: string;
 }
 
-interface IQuestion {
-  id: string;
-  description: string;
-  team: 'radiant' | 'dire';
-  level: 1 | 2;
-  is_selected: boolean;
-  options: IOption[];
-}
+// interface IQuestion {
+//   id: string;
+//   description: string;
+//   team: 'radiant' | 'dire';
+//   level: 1 | 2;
+//   is_selected: boolean;
+//   options: IOption[];
+// }
 
 interface IStudent {
   id: string;
@@ -54,19 +55,13 @@ const Quiz: React.FC = () => {
   const match = useRouteMatch();
   const { quizId } = useParams<QuizParams>();
   const [quizInfo, setQuizInfo] = useState<IQuizInfo>({} as IQuizInfo);
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
-  const [students, setStudents] = useState<IStudent[]>([]);
 
   useEffect(() => {
     api.get(`quizzes/${quizId}`).then(resp => {
       setQuizInfo({
-        ...resp.data.quiz,
+        ...resp.data,
         status: 'not-started',
       });
-
-      setQuestions(resp.data.questions);
-
-      setStudents(resp.data.students);
     });
   }, [quizId]);
 
@@ -93,10 +88,10 @@ const Quiz: React.FC = () => {
               <QuizInfo quizInfo={quizInfo} />
             </Route>
             <Route path={`${match.url}/participants`} exact>
-              <Participants students={students} quizId={quizId} />
+              <Participants quizId={quizId} />
             </Route>
             <Route path={`${match.url}/questions`} exact>
-              <Questions questions={questions} />
+              <Questions quizId={quizId} />
             </Route>
           </Switch>
         </Content>

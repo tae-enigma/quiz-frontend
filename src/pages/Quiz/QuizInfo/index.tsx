@@ -9,6 +9,7 @@ interface QuizInfo {
   question_team_qty_limit: number;
   status: 'not-started' | 'started' | 'finished';
   teacher_id: string;
+  teacher_name: string;
 }
 
 interface QuizInfoProps {
@@ -38,6 +39,10 @@ const QuizInfo: React.FC<QuizInfoProps> = ({ quizInfo }) => {
           <Info>
             <h4>Duração da aplicação do questionário</h4>
             <p>{quizInfo.time_limit}</p>
+          </Info>
+          <Info>
+            <h4>Professor</h4>
+            <p>{quizInfo.teacher_name}</p>
           </Info>
         </InfoList>
       </div>

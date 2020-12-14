@@ -34,13 +34,14 @@ interface IStudent {
   name: string;
   email: string;
   type: 'student' | 'teacher';
-  points: number;
-  team: 'radiant' | 'dire';
-  quiz_id: string;
+  quizzes: Array<{
+    points: number;
+    team: 'radiant' | 'dire';
+    quiz_id: string;
+  }>;
 }
 
 interface ParticipantsProps {
-  students: IStudent[];
   quizId: string;
 }
 
@@ -48,10 +49,11 @@ interface IFormData {
   email: string;
 }
 
-const Participants: React.FC<ParticipantsProps> = ({ students, quizId }) => {
+const Participants: React.FC<ParticipantsProps> = ({ quizId }) => {
   const { user } = useAuth();
-
   const { addToast } = useToast();
+
+  // const [students, setStudents] = useState<IStudent[]>([]);
 
   const formRef = useRef<FormHandles>(null);
   const [isOpen, setOpen] = useState(false);
@@ -65,12 +67,18 @@ const Participants: React.FC<ParticipantsProps> = ({ students, quizId }) => {
   );
 
   useEffect(() => {
-    setDireParticipants(students.filter(student => student.team === 'dire'));
+    api.get<IStudent[]>(`/quizzes/${quizId}/students`).then(response => {
+      const students = response.data;
 
-    setRadiantParticipants(
-      students.filter(student => student.team === 'radiant'),
-    );
-  }, [students]);
+      setDireParticipants(
+        students.filter(student => student.quizzes[0].team === 'dire'),
+      );
+
+      setRadiantParticipants(
+        students.filter(student => student.quizzes[0].team === 'radiant'),
+      );
+    });
+  }, [quizId]);
 
   const toggleModal = useCallback(() => setOpen(!isOpen), [isOpen]);
 
