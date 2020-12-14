@@ -1,9 +1,51 @@
-import Modal from 'styled-react-modal';
-import styled from 'styled-components';
+import Modal, { ModalProps } from 'styled-react-modal';
+import styled, { css } from 'styled-components';
+
+interface ModalContentProps {
+  size?: 'lg' | 'md' | 'sm';
+}
+
+const modalSize = {
+  lg: css`
+    width: 960px;
+  `,
+  md: css`
+    width: 700px;
+  `,
+  sm: css`
+    width: 480px;
+  `,
+};
 
 export const Container = Modal.styled`
+  overflow-y: auto;
+  max-height: 90vh;
+
+  /* Designing for scroll-bar */ 
+  ::-webkit-scrollbar { 
+    display: none;
+  } 
+
+  /* Track */ 
+  ::-webkit-scrollbar-track { 
+      background: #8E9FB1; 
+      border-radius: 5px; 
+  } 
+
+  /* Handle */ 
+  ::-webkit-scrollbar-thumb { 
+      background: #9BDDD0; 
+      border-radius: 5px; 
+  } 
+
+  /* Handle on hover */ 
+  ::-webkit-scrollbar-thumb:hover { 
+      background: #555; 
+  } 
+`;
+
+export const Content = styled.div<ModalContentProps>`
   background-color: #6a7b8d;
-  width: 480px;
   min-height: 400px;
   border-radius: 8px;
   padding: 32px;
@@ -11,9 +53,11 @@ export const Container = Modal.styled`
 
   position: relative;
 
+  ${props => props.size && modalSize[props.size || 'md']}
+
   h2 {
     margin-bottom: 24px;
-    color: #9BDDD0;
+    color: #9bddd0;
   }
 `;
 

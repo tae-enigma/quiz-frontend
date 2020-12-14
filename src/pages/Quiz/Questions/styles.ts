@@ -14,11 +14,19 @@ export const Content = styled.div`
   overflow-y: auto;
 `;
 
+export const QuestionsHeader = styled.div``;
+
+export const QuestionsActions = styled.div``;
+
 export const Question = styled.div`
   display: flex;
   padding: 16px;
   background-color: #e5e5e5;
   border-radius: 8px;
+
+  & + div {
+    margin-top: 8px;
+  }
 `;
 
 export const QuestionContent = styled.div`
