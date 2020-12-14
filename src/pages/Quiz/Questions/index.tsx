@@ -72,18 +72,29 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    api
-      .get(`/quizzes/${quizId}/questions`)
-      .then(response => {
-        setQuestions(response.data);
-      })
-      .catch(error => {
+    let isCancelled = false;
+
+    const fetchQuestions = async () => {
+      try {
+        const response = await api.get(`/quizzes/${quizId}/questions`);
+
+        if (!isCancelled) {
+          setQuestions(response.data);
+        }
+      } catch (error) {
         addToast({
           title: 'Erro',
           description: error.response.data.error,
           type: 'error',
         });
-      });
+      }
+    };
+
+    fetchQuestions();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [quizId, addToast]);
 
   const handleSubmit = useCallback(

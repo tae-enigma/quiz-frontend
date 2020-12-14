@@ -67,18 +67,39 @@ const Participants: React.FC<ParticipantsProps> = ({ quizId }) => {
   );
 
   useEffect(() => {
-    api.get<IStudent[]>(`/quizzes/${quizId}/students`).then(response => {
-      const students = response.data;
+    let isCancelled = false;
+    const fetchStudents = async () => {
+      try {
+        const response = await api.get<IStudent[]>(
+          `/quizzes/${quizId}/students`,
+        );
 
-      setDireParticipants(
-        students.filter(student => student.quizzes[0].team === 'dire'),
-      );
+        if (!isCancelled) {
+          const students = response.data;
 
-      setRadiantParticipants(
-        students.filter(student => student.quizzes[0].team === 'radiant'),
-      );
-    });
-  }, [quizId]);
+          setDireParticipants(
+            students.filter(student => student.quizzes[0].team === 'dire'),
+          );
+
+          setRadiantParticipants(
+            students.filter(student => student.quizzes[0].team === 'radiant'),
+          );
+        }
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro na autenticação',
+          description: err.response.data.error,
+        });
+      }
+    };
+
+    fetchStudents();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [quizId, addToast]);
 
   const toggleModal = useCallback(() => setOpen(!isOpen), [isOpen]);
 
@@ -115,32 +136,20 @@ const Participants: React.FC<ParticipantsProps> = ({ quizId }) => {
         setStudentsEmails([...studentsEmails, data.email]);
 
         formRef.current?.setData({ email: '' });
-        // const response = await api.post(`quizzes/${quizId}`, {
-        //   ...data,
-        //   team: selectedTeam,
-        // });
-
-        // if (selectedTeam === 'dire') {
-        //   setDireParticipants([...direParticipants, response.data]);
-        // } else {
-        //   setRadiantParticipants([...radiantParticipants, response.data]);
-        // }
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         } else {
-          // addToast({
-          //   type: 'error',
-          //   title: 'Erro na autenticação',
-          //   description:
-          //     'Ocorreu um erro ao fazer login, cheque as credenciais',
-          // });
+          addToast({
+            type: 'error',
+            title: 'Erro na autenticação',
+            description: err.response.data.error,
+          });
         }
       }
     },
-    [studentsEmails],
+    [studentsEmails, addToast],
   );
 
   const handleSubmit = useCallback(async () => {
