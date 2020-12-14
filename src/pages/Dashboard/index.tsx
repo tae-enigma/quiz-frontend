@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiPlus, FiUser } from 'react-icons/fi';
-import {
-  Switch,
-  useRouteMatch,
-  Route,
-  useHistory,
-  Link,
-} from 'react-router-dom';
+import { Switch, useRouteMatch, Route, Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -48,6 +42,7 @@ interface IQuiz {
   question_qty_limit: number;
   question_team_qty_limit: number;
   teacher_id: string;
+  teacher_name: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -188,7 +183,7 @@ const Dashboard: React.FC = () => {
                       <StatusBadge status="not-started">
                         Não iniciado
                       </StatusBadge>
-                      <p>{`Professor: ${user.name}`}</p>
+                      <p>{`Professor: ${quiz.teacher_name}`}</p>
                     </CardContent>
                   </Card>
                 ))}
