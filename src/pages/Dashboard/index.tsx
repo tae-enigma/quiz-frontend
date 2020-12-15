@@ -186,9 +186,6 @@ const Dashboard: React.FC = () => {
                       <Link to={`${match.url}/quizzes/${quiz.id}`}>
                         {quiz.name}
                       </Link>
-                      <StatusBadge status="not-started">
-                        Não iniciado
-                      </StatusBadge>
                       <p>{`Professor: ${quiz.teacher.name}`}</p>
                     </CardContent>
                   </Card>

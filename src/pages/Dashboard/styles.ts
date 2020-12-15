@@ -64,11 +64,11 @@ export const CardContent = styled.div`
     font-size: 18px;
     font-weight: 500;
     text-decoration: none;
-    margin-bottom: 16px;
     color: #303d50;
   }
 
   p {
+    margin-top: 16px;
     color: #6a7b8d;
   }
 `;
