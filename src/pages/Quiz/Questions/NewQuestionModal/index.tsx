@@ -113,8 +113,8 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
         <Form ref={formRef} onSubmit={handleSubmit}>
           <h2>Cadastre uma nova questão</h2>
           <p>
-            Crie uma nova questão para o seu time, o professor irá escolher as
-            questões mais pertinentes para compor o questionário
+            Cadastre uma nova questão para que o time adversário tenha a
+            oportunidade de respondê-la
           </p>
           <TextArea
             name="description"
@@ -133,7 +133,11 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
                   <FiCircle size={30} />
                 )}
               </Button>
-              <TextArea name="options[0].description" rows={2} />
+              <TextArea
+                name="options[0].description"
+                rows={2}
+                placeholder="Alternativa"
+              />
             </Option>
             <Option>
               <Button
@@ -146,7 +150,11 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
                   <FiCircle size={30} />
                 )}
               </Button>
-              <TextArea name="options[1].description" rows={2} />
+              <TextArea
+                name="options[1].description"
+                rows={2}
+                placeholder="Alternativa"
+              />
             </Option>
             <Option>
               <Button
@@ -159,7 +167,11 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
                   <FiCircle size={30} />
                 )}
               </Button>
-              <TextArea name="options[2].description" rows={2} />
+              <TextArea
+                name="options[2].description"
+                rows={2}
+                placeholder="Alternativa"
+              />
             </Option>
             <Option>
               <Button
@@ -172,7 +184,11 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
                   <FiCircle size={30} />
                 )}
               </Button>
-              <TextArea name="options[3].description" rows={2} />
+              <TextArea
+                name="options[3].description"
+                rows={2}
+                placeholder="Alternativa"
+              />
             </Option>
           </Scope>
           <Button color="primary" type="submit">

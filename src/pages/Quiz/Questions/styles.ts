@@ -97,12 +97,15 @@ interface OptionProps {
 export const Option = styled.div<OptionProps>`
   display: flex;
 
-  + div {
-    margin-top: 8px;
-  }
+  margin: 16px 0;
 
   svg {
+    align-self: flex-start;
     margin-right: 16px;
+  }
+
+  > div {
+    max-width: 80%;
   }
 
   ${props =>
