@@ -124,8 +124,6 @@ const Dashboard: React.FC = () => {
             title: 'Erro',
             description: err.response.data.error,
           });
-        } else {
-          console.log(err);
         }
       }
     },

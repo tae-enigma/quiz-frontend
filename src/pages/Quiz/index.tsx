@@ -62,7 +62,6 @@ const Quiz: React.FC = () => {
 
   useEffect(() => {
     api.get(`quizzes/${quizId}`).then(resp => {
-      console.log(resp.data);
       setQuizInfo(resp.data);
     });
   }, [quizId]);
