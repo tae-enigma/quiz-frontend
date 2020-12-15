@@ -2,18 +2,23 @@ import React, { useEffect } from 'react';
 
 import { Container, InfoList, Info } from './styles';
 
-interface QuizInfo {
+interface IQuizInfo {
+  id: string;
   name: string;
   time_limit: string;
   question_qty_limit: number;
   question_team_qty_limit: number;
-  status: 'not-started' | 'started' | 'finished';
   teacher_id: string;
-  teacher_name: string;
+  formated_time_limit: string;
+  teacher: {
+    name: string;
+    email: string;
+  };
+  status: 'not-started' | 'started' | 'finished';
 }
 
 interface QuizInfoProps {
-  quizInfo: QuizInfo;
+  quizInfo: IQuizInfo;
 }
 
 const quizStatusMap = {
@@ -29,20 +34,20 @@ const QuizInfo: React.FC<QuizInfoProps> = ({ quizInfo }) => {
         <h4>Configurações</h4>
         <InfoList>
           <Info>
-            <h4>Máximo de questões por equipe</h4>
-            <p>{quizInfo.question_team_qty_limit}</p>
-          </Info>
-          <Info>
             <h4>Máximo de questões no questionário</h4>
             <p>{quizInfo.question_qty_limit}</p>
           </Info>
           <Info>
+            <h4>Máximo de questões por equipe</h4>
+            <p>{quizInfo.question_team_qty_limit}</p>
+          </Info>
+          <Info>
             <h4>Duração da aplicação do questionário</h4>
-            <p>{quizInfo.time_limit}</p>
+            <p>{quizInfo.formated_time_limit}</p>
           </Info>
           <Info>
             <h4>Professor</h4>
-            <p>{quizInfo.teacher_name}</p>
+            <p>{quizInfo.teacher && quizInfo.teacher.name}</p>
           </Info>
         </InfoList>
       </div>

@@ -17,16 +17,20 @@ interface IQuizInfo {
   question_qty_limit: number;
   question_team_qty_limit: number;
   teacher_id: string;
-  teacher_name: string;
+  formated_time_limit: string;
+  teacher: {
+    name: string;
+    email: string;
+  };
   status: 'not-started' | 'started' | 'finished';
 }
 
-interface IOption {
-  id: string;
-  description: string;
-  is_correct: boolean;
-  question_id: string;
-}
+// interface IOption {
+//   id: string;
+//   description: string;
+//   is_correct: boolean;
+//   question_id: string;
+// }
 
 // interface IQuestion {
 //   id: string;
@@ -37,15 +41,15 @@ interface IOption {
 //   options: IOption[];
 // }
 
-interface IStudent {
-  id: string;
-  name: string;
-  email: string;
-  type: 'student' | 'teacher';
-  points: number;
-  team: 'radiant' | 'dire';
-  quiz_id: string;
-}
+// interface IStudent {
+//   id: string;
+//   name: string;
+//   email: string;
+//   type: 'student' | 'teacher';
+//   points: number;
+//   team: 'radiant' | 'dire';
+//   quiz_id: string;
+// }
 
 interface QuizParams {
   quizId: string;
@@ -58,10 +62,8 @@ const Quiz: React.FC = () => {
 
   useEffect(() => {
     api.get(`quizzes/${quizId}`).then(resp => {
-      setQuizInfo({
-        ...resp.data,
-        status: 'not-started',
-      });
+      console.log(resp.data);
+      setQuizInfo(resp.data);
     });
   }, [quizId]);
 

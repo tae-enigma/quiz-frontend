@@ -42,7 +42,10 @@ interface IQuiz {
   question_qty_limit: number;
   question_team_qty_limit: number;
   teacher_id: string;
-  teacher_name: string;
+  teacher: {
+    name: string;
+    email: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -112,21 +115,21 @@ const Dashboard: React.FC = () => {
 
         setQuizzes([...quizzes, response.data]);
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
+        } else if (err.response && err.response.data) {
+          addToast({
+            type: 'error',
+            title: 'Erro',
+            description: err.response.data.error,
+          });
         } else {
-          // addToast({
-          //   type: 'error',
-          //   title: 'Erro na autenticação',
-          //   description:
-          //     'Ocorreu um erro ao fazer login, cheque as credenciais',
-          // });
+          console.log(err);
         }
       }
     },
-    [quizzes, user],
+    [quizzes, user, addToast],
   );
 
   return (
@@ -136,7 +139,12 @@ const Dashboard: React.FC = () => {
           <h2>Novo questionário</h2>
 
           <Input name="name" type="text" placeholder="Nome da aventura" />
-          <Input name="time_limit" type="time" placeholder="Tempo limite" />
+          <Input
+            name="time_limit"
+            type="time"
+            placeholder="Tempo limite"
+            step="1"
+          />
           <Input
             name="question_qty_limit"
             type="number"
@@ -183,7 +191,7 @@ const Dashboard: React.FC = () => {
                       <StatusBadge status="not-started">
                         Não iniciado
                       </StatusBadge>
-                      <p>{`Professor: ${quiz.teacher_name}`}</p>
+                      <p>{`Professor: ${quiz.teacher.name}`}</p>
                     </CardContent>
                   </Card>
                 ))}
