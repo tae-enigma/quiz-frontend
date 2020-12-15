@@ -286,7 +286,7 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
                       ) : (
                         <FiCircle size={20} />
                       )}
-                      {option.description}
+                      <div>{option.description}</div>
                     </Option>
                   ))}
                 </Options>

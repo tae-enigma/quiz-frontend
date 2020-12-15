@@ -27,6 +27,7 @@ import getValidationErrors from '../../utils/getValidationErrors';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import Label from '../../components/Label';
 
 interface ICreateQuizFormData {
   name: string;
@@ -114,6 +115,12 @@ const Dashboard: React.FC = () => {
         });
 
         setQuizzes([...quizzes, response.data]);
+
+        addToast({
+          title: 'Success',
+          description: 'Questão cadastrada com sucesso',
+        });
+        toggleModal();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -136,19 +143,32 @@ const Dashboard: React.FC = () => {
         <Form ref={formRef} onSubmit={handleSubmit}>
           <h2>Novo questionário</h2>
 
+          <Label htmlFor="name">Nome do questionário</Label>
           <Input name="name" type="text" placeholder="Nome da aventura" />
+
+          <Label htmlFor="time_limit">
+            Limite de tempo do questionário (HH:MM:ss)
+          </Label>
           <Input
             name="time_limit"
             type="time"
             placeholder="Tempo limite"
             step="1"
           />
+
+          <Label htmlFor="question_qty_limit">
+            Quantidade máxima de questões
+          </Label>
           <Input
             name="question_qty_limit"
             type="number"
             step="2"
             placeholder="Quantidade máxima de questões"
           />
+
+          <Label htmlFor="question_team_qty_limit">
+            Quantidade de questões que os times devem cadastrar
+          </Label>
           <Input
             name="question_team_qty_limit"
             type="number"
