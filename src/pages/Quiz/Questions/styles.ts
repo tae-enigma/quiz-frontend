@@ -2,7 +2,22 @@ import styled, { css } from 'styled-components';
 import radiantIconImg from '../../../assets/images/radiant_icon.png';
 import direIconImg from '../../../assets/images/dire_icon.png';
 
+import radiantTowerImg from '../../../assets/images/tower_iluminados.png';
+import direTowerImg from '../../../assets/images/tower_temidos.png';
+
 export const Container = styled.div``;
+
+export const QuestionHeader = styled.div`
+  > div {
+    display: flex;
+    align-items: center;
+  }
+
+  div + div {
+    margin-left: 32px;
+  }
+`;
+
 export const ModalBody = styled.div`
   form > p {
     font-size: 12px;
@@ -63,6 +78,28 @@ export const QuestionActions = styled.div`
     padding: 0;
     margin: 0;
   }
+`;
+interface TeamTowerProps {
+  team: 'radiant' | 'dire';
+}
+
+const teamTowers = {
+  radiant: radiantTowerImg,
+  dire: direTowerImg,
+};
+
+export const TeamTower = styled.div<TeamTowerProps>`
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+
+  margin-right: 16px;
+
+  ${props =>
+    props.team &&
+    css`
+      background-image: url(${teamTowers[props.team]});
+    `};
 `;
 
 interface TeamIconProps {

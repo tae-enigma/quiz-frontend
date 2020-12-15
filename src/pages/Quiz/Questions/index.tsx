@@ -17,7 +17,9 @@ import {
   Options,
   Question,
   TeamIcon,
+  TeamTower,
   Option,
+  QuestionHeader,
   QuestionContent,
   QuestionActions,
   QuestionsHeader,
@@ -265,18 +267,18 @@ const Questions: React.FC<QuestionsProps> = ({ quizId }) => {
           questions.map(question => (
             <Question key={question.id}>
               <QuestionContent>
-                <div>
-                  <TeamIcon team={question.team} />
-                  <p>{teamsMap[question.team]}</p>
+                <QuestionHeader>
+                  <div>
+                    <TeamIcon team={question.team} />
+                    <p>{teamsMap[question.team]}</p>
+                  </div>
                   {question.is_selected && (
-                    <p>
-                      {`Dificuldade: ${String(question.level).padStart(
-                        2,
-                        '0',
-                      )}`}
-                    </p>
+                    <div>
+                      <TeamTower team={question.team} />
+                      <p>{`Nível: ${String(question.level)}`}</p>
+                    </div>
                   )}
-                </div>
+                </QuestionHeader>
                 <div>{question.description}</div>
                 <Options>
                   {question.options?.map(option => (

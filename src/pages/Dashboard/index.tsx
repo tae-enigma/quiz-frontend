@@ -163,6 +163,7 @@ const Dashboard: React.FC = () => {
             name="question_qty_limit"
             type="number"
             step="2"
+            min="10"
             placeholder="Quantidade máxima de questões"
           />
 
@@ -173,6 +174,7 @@ const Dashboard: React.FC = () => {
             name="question_team_qty_limit"
             type="number"
             step="2"
+            min="20"
             placeholder="Máximo de questões por time"
           />
           <Button color="primary" type="submit">
