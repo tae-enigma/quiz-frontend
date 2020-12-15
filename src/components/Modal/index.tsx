@@ -6,10 +6,15 @@ import { Container, CloseButton, Content } from './styles';
 
 interface ModalProps extends ReactModalProps {
   toggle?(): any;
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'xlg' | 'lg' | 'md' | 'sm';
 }
 
-const Modal: React.FC<ModalProps> = ({ children, toggle, size, ...rest }) => {
+const Modal: React.FC<ModalProps> = ({
+  children,
+  toggle,
+  size = 'md',
+  ...rest
+}) => {
   return (
     <Container {...rest} onBackgroundClick={toggle}>
       <Content size={size}>

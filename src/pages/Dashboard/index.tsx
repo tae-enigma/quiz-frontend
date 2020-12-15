@@ -132,7 +132,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container>
-      <Modal isOpen={isOpen} toggle={toggleModal}>
+      <Modal isOpen={isOpen} toggle={toggleModal} size="md">
         <Form ref={formRef} onSubmit={handleSubmit}>
           <h2>Novo questionário</h2>
 

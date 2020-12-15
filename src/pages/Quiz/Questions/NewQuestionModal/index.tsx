@@ -106,7 +106,7 @@ const NewQuestionModal: React.FC<NewQuestionModalProps> = ({
     <Modal
       isOpen={isOpen}
       toggle={toggle}
-      size="md"
+      size="lg"
       beforeClose={beforeModalClose}
     >
       <Container>

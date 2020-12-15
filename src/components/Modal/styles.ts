@@ -1,19 +1,22 @@
-import Modal, { ModalProps } from 'styled-react-modal';
+import Modal from 'styled-react-modal';
 import styled, { css } from 'styled-components';
 
 interface ModalContentProps {
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'xlg' | 'lg' | 'md' | 'sm';
 }
 
 const modalSize = {
+  xlg: css`
+    width: 1140px;
+  `,
   lg: css`
-    width: 960px;
+    width: 800px;
   `,
   md: css`
-    width: 700px;
+    width: 500px;
   `,
   sm: css`
-    width: 480px;
+    width: 300px;
   `,
 };
 
