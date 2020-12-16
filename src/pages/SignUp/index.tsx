@@ -69,8 +69,6 @@ const SignUp: React.FC = () => {
           abortEarly: false,
         });
 
-        console.log(selectedUserType);
-
         await api.post('/users', {
           ...data,
           type: selectedUserType,

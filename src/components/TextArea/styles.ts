@@ -39,12 +39,14 @@ export const Container = styled.div<ContainerProps>`
 
 
 
-  input {
+  textarea {
     background-color: #e5e5e5;
     border-radius: 8px;
-    padding: 16px 32px;
+    padding: 16px 16px;
     width: 100%;
+
     color: #374354;
+    resize: none;
 
     border: 2px solid #e5e5e5;
 
