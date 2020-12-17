@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FiFileText, FiUsers, FiInfo, FiPlay } from 'react-icons/fi';
+import { FiFileText, FiUsers, FiInfo, FiPlay, FiAward } from 'react-icons/fi';
 
-import { Switch, useRouteMatch, Route, useParams } from 'react-router-dom';
+import {
+  Switch,
+  useRouteMatch,
+  Route,
+  useParams,
+  useHistory,
+} from 'react-router-dom';
 import Button from '../../components/Button';
 import Link from '../../components/Link';
 import { useAuth } from '../../hooks/auth';
@@ -33,8 +39,10 @@ interface QuizParams {
 
 const Quiz: React.FC = () => {
   const match = useRouteMatch();
+  const history = useHistory();
   const { user } = useAuth();
   const { addToast } = useToast();
+
   const { quizId } = useParams<QuizParams>();
   const [quizInfo, setQuizInfo] = useState<IQuizInfo>({} as IQuizInfo);
 
@@ -69,6 +77,14 @@ const Quiz: React.FC = () => {
     }
   }, [quizId, addToast, user]);
 
+  const handleGoToReply = useCallback(() => {
+    history.push(`/quizzes/${quizId}/reply`);
+  }, [history, quizId]);
+
+  const handleGoToResults = useCallback(() => {
+    history.push(`/quizzes/${quizId}/result`);
+  }, [history, quizId]);
+
   return (
     <Container>
       {quizInfo && (
@@ -87,13 +103,36 @@ const Quiz: React.FC = () => {
               </Link>
             </div>
             <QuizActions>
-              <Button
-                onClick={handlePlayQuiz}
-                disabled={quizInfo.status !== 'not-started'}
-              >
-                <FiPlay size={20} />
-                Iniciar
-              </Button>
+              {user.type === 'teacher' && (
+                <Button
+                  onClick={handlePlayQuiz}
+                  disabled={quizInfo.status !== 'not-started'}
+                >
+                  <FiPlay size={20} />
+                  Iniciar
+                </Button>
+              )}
+              {user.type === 'student' && (
+                <>
+                  {quizInfo.status !== 'finished' ? (
+                    <Button
+                      onClick={handleGoToReply}
+                      disabled={quizInfo.status !== 'started'}
+                    >
+                      <FiPlay size={20} />
+                      Responder
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleGoToResults}
+                      disabled={quizInfo.status !== 'finished'}
+                    >
+                      <FiAward size={20} />
+                      Resultado
+                    </Button>
+                  )}
+                </>
+              )}
             </QuizActions>
           </QuizMenu>
           <Switch>
