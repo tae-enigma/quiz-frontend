@@ -6,26 +6,50 @@ interface ContainerProps {
 }
 // '#3BAE97
 const buttonColors = {
-  primary: css`
-    background: #3bae97;
-    border: 3px solid #3bae97;
-    color: #374354;
-
-    &:hover {
-      border-color: ${shade(0.2, '#3BAE97')};
-      background: ${shade(0.2, '#3BAE97')};
-    }
-  `,
-  secondary: css`
-    background: transparent;
-    border: 3px solid #3bae97;
-    color: #3bae97;
-
-    &:hover {
+  primary: {
+    enabled: css`
       background: #3bae97;
-      color: #f5f5f5;
-    }
-  `,
+      border: 3px solid #3bae97;
+      color: #374354;
+
+      &:hover {
+        border-color: ${shade(0.2, '#3BAE97')};
+        background: ${shade(0.2, '#3BAE97')};
+      }
+    `,
+    disabled: css`
+      background: #8e9fb1;
+      border: 3px solid #8e9fb1;
+      color: #374354;
+
+      /* &:hover {
+        border-color: ${shade(0.2, '#9BDDD0')};
+        background: ${shade(0.2, '#9BDDD0')};
+      } */
+    `,
+  },
+  secondary: {
+    enabled: css`
+      background: transparent;
+      border: 3px solid #3bae97;
+      color: #3bae97;
+
+      &:hover {
+        background: #3bae97;
+        color: #f5f5f5;
+      }
+    `,
+    disabled: css`
+      background: transparent;
+      border: 3px solid #8e9fb1;
+      color: #8e9fb1;
+
+      /* &:hover {
+        background: #3bae97;
+        color: #f5f5f5;
+      } */
+    `,
+  },
 };
 
 export const Container = styled.button<ContainerProps>`
@@ -45,5 +69,10 @@ export const Container = styled.button<ContainerProps>`
 
   transition: all 0.2s;
 
-  ${props => buttonColors[props.color || 'primary']}
+  ${props => buttonColors[props.color || 'primary'].enabled}
+
+  &:disabled {
+    cursor: default;
+    ${props => buttonColors[props.color || 'primary'].disabled}
+  }
 `;

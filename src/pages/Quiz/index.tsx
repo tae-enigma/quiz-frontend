@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { FiFileText, FiUsers, FiInfo } from 'react-icons/fi';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FiFileText, FiUsers, FiInfo, FiPlay } from 'react-icons/fi';
 
 import { Switch, useRouteMatch, Route, useParams } from 'react-router-dom';
+import Button from '../../components/Button';
 import Link from '../../components/Link';
+import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import Participants from './Participants';
 import Questions from './Questions';
 import QuizInfo from './QuizInfo';
 
-import { Container, Content, QuizMenu } from './styles';
+import { Container, Content, QuizMenu, QuizActions } from './styles';
 
 interface IQuizInfo {
   id: string;
@@ -24,39 +27,14 @@ interface IQuizInfo {
   };
   status: 'not-started' | 'started' | 'finished';
 }
-
-// interface IOption {
-//   id: string;
-//   description: string;
-//   is_correct: boolean;
-//   question_id: string;
-// }
-
-// interface IQuestion {
-//   id: string;
-//   description: string;
-//   team: 'radiant' | 'dire';
-//   level: 1 | 2;
-//   is_selected: boolean;
-//   options: IOption[];
-// }
-
-// interface IStudent {
-//   id: string;
-//   name: string;
-//   email: string;
-//   type: 'student' | 'teacher';
-//   points: number;
-//   team: 'radiant' | 'dire';
-//   quiz_id: string;
-// }
-
 interface QuizParams {
   quizId: string;
 }
 
 const Quiz: React.FC = () => {
   const match = useRouteMatch();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const { quizId } = useParams<QuizParams>();
   const [quizInfo, setQuizInfo] = useState<IQuizInfo>({} as IQuizInfo);
 
@@ -65,6 +43,31 @@ const Quiz: React.FC = () => {
       setQuizInfo(resp.data);
     });
   }, [quizId]);
+
+  const handlePlayQuiz = useCallback(async () => {
+    try {
+      const response = await api.patch(`quizzes/${quizId}/start`);
+
+      setQuizInfo({
+        ...response.data,
+        teacher: user,
+      });
+
+      addToast({
+        title: 'Quiz iniciado com sucesso',
+        description: 'Agora os participantes já podem responder as questões',
+        type: 'success',
+      });
+    } catch (error) {
+      if (error.response && error.response.data) {
+        addToast({
+          title: 'Erro',
+          description: error.response.data.error,
+          type: 'error',
+        });
+      }
+    }
+  }, [quizId, addToast, user]);
 
   return (
     <Container>
@@ -83,6 +86,15 @@ const Quiz: React.FC = () => {
                 Questões
               </Link>
             </div>
+            <QuizActions>
+              <Button
+                onClick={handlePlayQuiz}
+                disabled={quizInfo.status !== 'not-started'}
+              >
+                <FiPlay size={20} />
+                Iniciar
+              </Button>
+            </QuizActions>
           </QuizMenu>
           <Switch>
             <Route path={`${match.url}`} exact>
